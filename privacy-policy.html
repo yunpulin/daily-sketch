@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Daily Sketching Extension</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #1a73e8;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+    
+    .last-updated {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+    
+    h2 {
+      color: #1a73e8;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 1.5em;
+      border-bottom: 2px solid #e8eaed;
+      padding-bottom: 5px;
+    }
+    
+    h3 {
+      color: #5f6368;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+    
+    p {
+      margin-bottom: 15px;
+    }
+    
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+    
+    li {
+      margin-bottom: 8px;
+    }
+    
+    strong {
+      color: #1a73e8;
+    }
+    
+    .highlight {
+      background: #e8f0fe;
+      padding: 15px;
+      border-left: 4px solid #1a73e8;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    
+    .summary {
+      background: #f1f3f4;
+      padding: 20px;
+      border-radius: 4px;
+      margin-top: 30px;
+      border-left: 4px solid #34a853;
+    }
+    
+    .summary strong {
+      color: #34a853;
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    hr {
+      border: none;
+      border-top: 1px solid #e8eaed;
+      margin: 30px 0;
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Privacy Policy for Daily Sketching Extension</h1>
+    <p class="last-updated"><strong>Last Updated:</strong> <span id="lastUpdated">2025-11-14</span></p>
+    
+    <h2>Overview</h2>
+    <p>Daily Sketching is a Chrome extension that provides a timer for practicing drawing with local photo folders. This privacy policy explains how the extension handles your data.</p>
+    
+    <h2>Data Collection and Storage</h2>
+    
+    <h3>Local Storage Only</h3>
+    <div class="highlight">
+      <strong>All data is stored locally on your device. No data is transmitted to external servers or third parties.</strong>
+    </div>
+    
+    <p>The extension uses the following local storage mechanisms:</p>
+    
+    <ol>
+      <li><strong>Chrome Storage API</strong> (<code>chrome.storage</code>)
+        <ul>
+          <li>Stores your timer settings (photo count, duration, sound preferences, etc.)</li>
+          <li>Stored locally in your browser</li>
+        </ul>
+      </li>
+      
+      <li><strong>IndexedDB</strong>
+        <ul>
+          <li>Stores recent session information:
+            <ul>
+              <li>Folder names you've selected</li>
+              <li>Folder handles (for quick access to previously used folders)</li>
+              <li>Timestamps of when folders were last accessed</li>
+            </ul>
+          </li>
+          <li>Limited to the 10 most recent sessions</li>
+          <li>All data remains on your device</li>
+        </ul>
+      </li>
+      
+      <li><strong>LocalStorage</strong>
+        <ul>
+          <li>Stores application settings and preferences</li>
+          <li>Stored locally in your browser</li>
+        </ul>
+      </li>
+    </ol>
+    
+    <h3>File System Access</h3>
+    <p>The extension uses the <strong>File System Access API</strong> to:</p>
+    <ul>
+      <li>Allow you to select local folders containing photos</li>
+      <li>Read image files from your selected folders</li>
+      <li>Display images for your drawing practice</li>
+    </ul>
+    
+    <div class="highlight">
+      <strong>Important:</strong>
+      <ul style="margin-top: 10px;">
+        <li>The extension only accesses folders you explicitly select</li>
+        <li>No files are modified, copied, or uploaded</li>
+        <li>Folder access requires your explicit permission each time</li>
+        <li>Folder handles are stored locally (in IndexedDB) only to enable quick access to recently used folders</li>
+      </ul>
+    </div>
+    
+    <h2>Permissions</h2>
+    <p>The extension requests the following permissions:</p>
+    <ul>
+      <li><strong>Storage</strong>: Used to save your settings and preferences locally</li>
+      <li><strong>File System Access</strong> (via user interaction): Used to read image files from folders you select</li>
+    </ul>
+    
+    <h2>Data Sharing</h2>
+    <div class="highlight">
+      <strong>We do not collect, share, or transmit any data to external servers or third parties.</strong> All data remains on your device.
+    </div>
+    
+    <h2>Data Deletion</h2>
+    <p>You can delete stored data at any time by:</p>
+    <ul>
+      <li>Removing the extension from Chrome (this deletes all stored data)</li>
+      <li>Clearing your browser's storage data for the extension</li>
+      <li>Using the extension's settings to clear recent sessions</li>
+    </ul>
+    
+    <h2>Changes to This Policy</h2>
+    <p>If we make changes to this privacy policy, we will update the "Last Updated" date at the top of this document.</p>
+    
+    <h2>Contact</h2>
+    <p>If you have questions about this privacy policy or how the extension handles your data, please contact us through the Chrome Web Store listing or the extension's support channel.</p>
+    
+    <h2>Compliance</h2>
+    <p>This extension complies with:</p>
+    <ul>
+      <li>Chrome Web Store Developer Program Policies</li>
+      <li>General Data Protection Regulation (GDPR) - as no personal data is collected or transmitted</li>
+      <li>All data processing occurs locally on your device</li>
+    </ul>
+    
+    <hr>
+    
+    <div class="summary">
+      <strong>Summary:</strong>
+      <p>Your privacy is important to us. This extension operates entirely locally on your device and does not collect, transmit, or share any data with external parties.</p>
+    </div>
+  </div>
+  
+  <script>
+    document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  </script>
+</body>
+</html>
+

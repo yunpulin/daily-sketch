@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Daily Sketching",
+  "short_name": "Daily Sketch",
+  "version": "1.0.0",
+  "description": "A timer extension for daily drawing practice using local photo folders. Set custom intervals, shuffle photos, and track your sketching sessions—all data stays on your device.",
+  "action": { "default_title": "Open Timer" },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [{
+    "resources": ["timer.html", "styles.css"],
+    "matches": ["<all_urls>"]
+  }]
+}
+

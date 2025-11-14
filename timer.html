@@ -1,0 +1,244 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Local Photo Timer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <section class="stage">
+      <img id="img" alt="current reference" hidden />
+      <div class="overlay">
+
+        <!-- HUD -->
+        <div class="hud" id="hud">
+          <!-- Group 1 (left): Back ▸ current / total ▸ FF ▸ spacer ▸ Fullscreen ▸ Thumbnails ▸ Help ▸ Settings ▸ spacer ▸ Info -->
+          <div class="hud-left">
+            <button id="backBtn" class="icon-btn" title="Back">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path d="M11 17l-5-5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M17 17l-5-5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+            <div class="counter"><span id="indexSpan">0</span> / <span id="totalSpan">0</span></div>
+
+            <button id="ffBtn" class="icon-btn" title="Fast Forward">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path d="M7 17l5-5-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13 17l5-5-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+            <div class="spacer"></div>
+
+            <button id="fullscreenToggleBtn" class="icon-btn" title="Fullscreen">
+              <svg id="iconFullscreen" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path d="M15 3h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 21H3v-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 3l-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 21l7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+
+            <button id="thumbsBtn" class="icon-btn" title="Thumbnails">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="14" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 13l3-3 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="8.5" cy="7.5" r="1.5" fill="currentColor"/>
+              </svg>
+            </button>
+
+            <button id="helpBtn" class="icon-btn" title="Help">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 2-3 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+
+            <button id="settingsBtn" class="icon-btn" title="Settings">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+
+            <div class="spacer"></div>
+
+            <!-- Info section at right end -->
+            <div class="meta">
+              <div class="phase" id="phaseLabel">idle</div>
+              <div class="status" id="status" aria-live="polite"></div>
+              <div id="scan" class="scan" hidden>
+                <div class="scan-bar"><div class="scan-fill"></div></div>
+                <div class="scan-label" id="scanLabel">Scanning…</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Group 2 (right): ring + Play/Pause + timer -->
+          <div class="hud-right">
+            <div class="dial">
+              <svg class="ring" viewBox="0 0 120 120" width="76" height="76" aria-hidden="true">
+                <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
+                <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="54"></circle>
+              </svg>
+
+              <button id="playPauseBtn" class="dial-center" title="Play/Pause" aria-pressed="false">
+                <!-- PLAY -->
+                <svg id="iconPlay" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                  <path d="M8 5l12 7-12 7z" fill="currentColor"/>
+                </svg>
+                <!-- PAUSE -->
+                <svg id="iconPause" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" hidden>
+                  <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"></rect>
+                  <rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"></rect>
+                </svg>
+              </button>
+            </div>
+
+            <div class="timer-text">
+              <span id="remaining">00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Break screen -->
+        <div class="break-screen" hidden>
+          <div><h1>Break</h1><p>Great job — breathe and relax.</p></div>
+        </div>
+
+        <!-- Settings -->
+        <aside id="settingsPanel" class="settings" hidden>
+          <header>
+            <h2>Settings</h2>
+            <button id="closeSettings" class="btn btn-ghost">✕</button>
+          </header>
+
+          <div class="grid">
+            <div class="field"><label>Choose Folder</label><button id="pickBtn" class="btn">Choose…</button></div>
+
+            <div class="field">
+              <label>Recent Sessions</label>
+              <div id="recentList" class="recent-list"><div class="muted">No recent sessions yet.</div></div>
+            </div>
+            <section>
+              <h3>Recent Sessions</h3>
+              <div id="recentSessions" class="recent-sessions"></div>
+            </section>
+
+            <div class="field">
+              <label>Photos</label>
+              <input id="countInput" type="number" min="1" step="1" value="30">
+              <div class="chip-group" id="countPresets">
+                <button class="chip" data-count="10">10</button>
+                <button class="chip" data-count="20">20</button>
+                <button class="chip" data-count="30">30</button>
+                <button class="chip" data-count="50">50</button>
+                <button class="chip" data-count="100">100</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Seconds / Photo</label>
+              <input id="secondsInput" type="number" min="1" step="1" value="30">
+              <div class="chip-group" id="durationPresets">
+                <button class="chip" data-seconds="5">5s</button>
+                <button class="chip" data-seconds="30">30s</button>
+                <button class="chip" data-seconds="60">1m</button>
+                <button class="chip" data-seconds="120">2m</button>
+                <button class="chip" data-seconds="180">3m</button>
+                <button class="chip" data-seconds="300">5m</button>
+                <button class="chip" data-seconds="600">10m</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="inline">Shuffle <input id="shuffleInput" type="checkbox" checked></label>
+              <label class="inline">Include Subfolders <input id="recurseInput" type="checkbox" checked></label>
+            </div>
+
+            <div class="field"><label>Category</label><select id="categorySel"><option value="__ALL__">All</option></select></div>
+
+            <div class="field two">
+              <label>Break every (photos) <input id="breakEveryInput" type="number" min="0" value="0"></label>
+              <label>Break seconds <input id="breakSecondsInput" type="number" min="1" value="3"></label>
+            </div>
+
+            <div class="field two">
+              <label>Warm-up (s) <input id="warmupSecondsInput" type="number" min="0" value="5"></label>
+              <label>Cool-down (s) <input id="cooldownSecondsInput" type="number" min="0" value="5"></label>
+            </div>
+
+            <div class="field">
+              <label>Sound Pack</label>
+              <select id="soundPackSelect">
+                <option value="classic">Classic</option>
+                <option value="woodblock">Woodblock</option>
+                <option value="claves">Claves</option>
+                <option value="click">Click</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+
+            <div class="field two">
+              <label class="inline">Edge-to-edge (Cover) <input id="coverModeInput" type="checkbox"></label>
+              <label class="inline">Fullscreen on start <input id="fullscreenOnStartInput" type="checkbox" checked></label>
+            </div>
+
+            <div class="field">
+              <label>Thumbnail size: <strong id="thumbSizeLabel">Auto</strong></label>
+              <input id="thumbSizeInput" type="range" min="80" max="260" step="4">
+              <div class="muted">Double-click slider to reset to Auto.</div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Hints -->
+        <aside id="hintsPanel" class="hints" hidden>
+          <header>
+            <h2>Keyboard Shortcuts</h2>
+            <button id="closeHints" class="btn btn-ghost">✕</button>
+          </header>
+          <ul>
+            <li><kbd>Space</kbd> — Play / Pause</li>
+            <li><kbd>→</kbd> — Next</li>
+            <li><kbd>←</kbd> — Previous</li>
+            <li><kbd>F</kbd> — Toggle Fullscreen</li>
+            <li><kbd>?</kbd> — Toggle Help</li>
+          </ul>
+        </aside>
+
+        <!-- Thumbnails Tray -->
+        <div id="thumbsTray" class="thumbs-tray" hidden>
+          <button id="closeThumbs" class="tray-close btn btn-ghost" title="Close">✕</button>
+          <div id="thumbsWrap" class="thumbs"></div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- JS (split modules in order) -->
+  <script src="js/constants.js"></script>
+  <script src="js/dom.js"></script>
+  <script src="js/controls.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <!--script src="js/recents.js"></script-->
+  <script src="js/cache.js"></script>
+  <script src="js/preload.js"></script>
+  <script src="js/thumbnails.js"></script>
+  <script src="js/folder.js"></script>
+  <script src="js/sessions.js"></script>
+  <script src="js/order.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/timer_engine.js"></script>
+  <script src="js/hud.js"></script>
+  <script src="js/init.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,91 @@
+:root{
+  --thumb-w: clamp(96px, 14vw, 208px);
+}
+*,
+*::before,
+*::after { box-sizing: border-box; }
+html, body { height: 100%; width: 100%; margin: 0; background:#111; color:#eee; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; overflow: hidden; }
+.stage { position: fixed; inset: 0; background: #000; }
+#img { width: 100%; height: 100%; object-fit: contain; display: block; }
+#img.cover-mode { object-fit: cover; }
+/* Blur state while loading (blur-out) */
+#img.is-loading {
+  filter: blur(16px) grayscale(0.1) brightness(0.92);
+  transition: filter .25s;
+  /* opacity: 0.85; */
+}
+/* Soft blur used during warm-up and during the break preview of the next photo */
+#img.is-soft-blur {
+  filter: blur(5px) grayscale(0.1) brightness(0.92);
+  transition: filter .25s;
+  /* opacity: 0.95 */;
+}
+#img.clean-img { filter: blur(0) grayscale(0) brightness(1) }
+/*#img.transition { transition: filter .25s ease, opacity .20s ease; } */ /* smooth in/out */
+[hidden] { display: none !important; }
+
+.overlay { position: absolute; inset: 0; }
+
+.hud {
+  position: absolute; left: 1rem; right: 1rem; top: 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: .5rem .75rem;
+  background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px; backdrop-filter: blur(8px);
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 10;
+}
+.hud.autohide-hidden { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+
+.hud-left { display: flex; align-items: center; gap: .5rem; min-width: 0; flex: 1; }
+.hud-right { display: flex; align-items: center; gap: .75rem; }
+
+.icon-btn {
+  background: transparent; color: #e6e6e6; border: 1px solid rgba(255,255,255,.25);
+  border-radius: 10px; padding: .35rem .5rem; cursor: pointer;
+}
+.icon-btn:hover { background: rgba(255,255,255,.06); }
+
+.spacer { width: 1px; height: 26px; background: rgba(255,255,255,.15); margin: 0 .35rem; }
+
+.counter { background: rgba(0,0,0,.45); padding: .15rem .5rem; border-radius: 8px; font-weight: 800; font-size: 1.2rem; }
+.meta { display: grid; gap: .2rem; min-width: 0; }
+.phase { text-transform: uppercase; letter-spacing: .04em; opacity: .95; }
+.status { opacity: .9; font-size: 1.2rem; min-height: 1.2em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46vw; }
+
+.scan { display: grid; gap: .2rem; width: 220px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; padding: .35rem .5rem; }
+.scan-bar { height: 6px; background: rgba(255,255,255,.12); border-radius: 999px; overflow: hidden; position: relative; }
+.scan-fill { position: absolute; inset: 0 auto 0 0; width: 35%; background: linear-gradient(90deg, #6fbaff, #8fd5ff); border-radius: 999px; animation: scan-anim 1.2s infinite ease-in-out; }
+@keyframes scan-anim { 0% { transform: translateX(-110%); } 50% { transform: translateX(40%); } 100% { transform: translateX(160%); } }
+
+/* Ring + Play/Pause layering */
+.dial { position: relative; width: 76px; height: 76px; display: grid; place-items: center; }
+.ring { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ring-bg { fill: none; stroke: rgba(255,255,255,.15); stroke-width: 8; }
+.ring-fg { fill: none; stroke: #7ad; stroke-width: 8; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
+
+.dial-center {
+  position: absolute; inset: 0;
+  display: grid; place-items: center; z-index: 2;
+  width: 44px; height: 44px; margin: auto;
+  border-radius: 50%; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.2);
+  color: #fff; cursor: pointer;
+}
+.dial-center:hover { background: rgba(255,255,255,.08); }
+.dial-center svg { display: block; width: 26px; height: 26px; }
+#iconPause[hidden], #iconPlay[hidden] { display: none !important; }
+
+.timer-text { font-weight: 800; font-size: 1.2rem; background: rgba(0,0,0,.55); padding: .15rem .5rem; border-radius: 6px; min-width: 72px; text-align: center; }
+
+/* Panels, tray */
+.thumbs-tray { position: absolute; left: 1rem; right: 1rem; bottom: 1rem; z-index: 11; backdrop-filter: blur(6px); background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: .4rem .5rem; transition: opacity .25s ease; }
+.thumbs-tray.is-fading { opacity: 0; pointer-events: none; }
+.thumbs { display: flex; align-items: stretch; gap: .5rem; overflow-x: auto; padding-right: 2.2rem; }
+.thumb { flex: 0 0 auto; width: var(--thumb-w); aspect-ratio: 3/2; border-radius: 6px; overflow: hidden; border: 2px solid transparent; background: #000; }
+.thumb img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
+.thumb.active { border-color: #7ad; box-shadow: 0 0 0 2px rgba(122,173,255,.35); }
+
+.settings, .hints { position: absolute; right: 1rem; top: 5.5rem; width: min(520px, 90vw); background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: .75rem; z-index: 12; backdrop-filter: blur(8px); }
+.btn { background: #2a2a2a; color: #eee; border: 1px solid #3a3a3a; border-radius: 8px; padding: .45rem .7rem; cursor: pointer; }
+.btn-ghost { background: transparent; border-color: rgba(255,255,255,.2); }
+
