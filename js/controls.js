@@ -1,10 +1,11 @@
 // js/controls.js
 window.app = window.app || {};
 (function(app){
-  // Choose Folder
+  // Choose Folder (on landing: select folder for session)
   app.on(app.el.pickBtn, 'click', async () => {
+    if (!app.el.pickBtn) return;
     app.el.pickBtn.disabled = true;
-    try { await app.chooseDirectory(); } finally { app.el.pickBtn && (app.el.pickBtn.disabled = false); }
+    try { await app.chooseFolderForLanding?.(); } finally { app.el.pickBtn.disabled = false; }
   });
 
   // Play/Pause (single button)
@@ -95,19 +96,20 @@ window.app = window.app || {};
       app.showHud?.(); app.scheduleHudHide?.();
       });
 
-  // Panels
+  // Settings = return to landing (single UI)
   app.on(app.el.settingsBtn, 'click', () => {
-      const panel = app.el.settingsPanel || document.getElementById('settings');
-      if (!panel) { console.warn('Settings panel not found'); return; }
-      panel.hidden = !panel.hidden;
+      if (app.el.landing) app.el.landing.hidden = false;
+      if (app.el.stage) app.el.stage.hidden = true;
       app.showHud?.(); app.scheduleHudHide?.();
       });
-  app.on(app.el.closeSettings, 'click', () => {
-      const panel = app.el.settingsPanel || document.getElementById('settings');
-      if (!panel) return;
-      panel.hidden = true;
+
+  // Close landing (Settings) → back to stage
+  app.on(app.el.landingCloseBtn, 'click', () => {
+      if (app.el.landing) app.el.landing.hidden = true;
+      if (app.el.stage) app.el.stage.hidden = false;
       app.showHud?.(); app.scheduleHudHide?.();
       });
+
   app.on(app.el.helpBtn, 'click', () => {
       const panel = app.el.hintsPanel || document.getElementById('hintsPanel');
       if (!panel) return;
@@ -124,11 +126,6 @@ window.app = window.app || {};
   // Click-outside to close panels
   document.addEventListener('click', (e) => {
     const d = app.el;
-    if (d.settingsPanel && !d.settingsPanel.hidden) {
-      if (!d.settingsPanel.contains(e.target) && e.target !== d.settingsBtn) {
-        d.settingsPanel.hidden = true; app.showHud(); app.scheduleHudHide();
-      }
-    }
     if (d.hintsPanel && !d.hintsPanel.hidden) {
       if (!d.hintsPanel.contains(e.target) && e.target !== d.helpBtn) {
         d.hintsPanel.hidden = true; app.showHud(); app.scheduleHudHide();

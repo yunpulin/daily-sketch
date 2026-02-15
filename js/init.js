@@ -6,12 +6,36 @@
   // safe event binder even if app.on isn't defined yet
   const on = app.on || ((el, ev, fn, opts) => { if (el && el.addEventListener) el.addEventListener(ev, fn, opts); });
 
-  function init() {
-    // 1) Load persisted settings & recent sessions (if modules are present)
-    if (typeof app.loadSettings === 'function') app.loadSettings();
-    if (typeof app.renderRecentSessions === 'function') app.renderRecentSessions();
+  app.updateLandingSelectedName = function(name) {
+    if (app.el.landingSelectedName) app.el.landingSelectedName.textContent = name || 'No folder selected';
+  };
 
-    // 2) Preset chips
+  app.startSession = async function startSession() {
+    if (!app.el.landingError) return;
+    app.el.landingError.hidden = true;
+    if (typeof app.saveSettings === 'function') app.saveSettings();
+
+    if (!app.selectedHandle) {
+      app.el.landingError.textContent = 'Select a folder (or a recent session) before starting.';
+      app.el.landingError.hidden = false;
+      return;
+    }
+
+    if (app.el.startSessionBtn) app.el.startSessionBtn.disabled = true;
+    try {
+      await app.chooseDirectoryWithHandle(app.selectedHandle);
+      app.beginSession?.();
+    } finally {
+      if (app.el.startSessionBtn) app.el.startSessionBtn.disabled = false;
+    }
+  };
+
+  function init() {
+    // 1) Load persisted settings & recent sessions
+    if (typeof app.loadSettings === 'function') app.loadSettings();
+    if (typeof app.renderLandingRecents === 'function') app.renderLandingRecents();
+
+    // 2) Preset chips (count & duration)
     on(app.el.durationChips, 'click', (e) => {
       const v = e.target.closest?.('.chip')?.dataset?.seconds;
       if (!v || !app.el.secondsInput) return;
@@ -24,6 +48,8 @@
       app.el.countInput.value = v;
       if (typeof app.saveSettings === 'function') app.saveSettings();
     });
+
+    on(app.el.startSessionBtn, 'click', () => app.startSession());
 
     // 3) Settings persistence (bind only if controls exist)
     const persistEls = [
@@ -64,13 +90,6 @@
     }
 
     if (app.el.remaining) app.el.remaining.textContent = '00:00';
-
-    // ✅ Always show Settings on launch so user picks folder or a session
-    if (app.el.settingsPanel) {
-      app.el.settingsPanel.hidden = false;
-    }
-
-    // for good measure, keep HUD visible when settings open
     if (typeof app.showHud === 'function') app.showHud();
   }
 

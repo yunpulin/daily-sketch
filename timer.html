@@ -8,7 +8,103 @@
 </head>
 <body>
   <main>
-    <section class="stage">
+    <!-- Single unified UI: all settings on landing -->
+    <section id="landing" class="landing">
+      <div class="landing-inner">
+        <header class="landing-header">
+          <h1 class="landing-title">Timer</h1>
+          <button id="landingCloseBtn" type="button" class="landing-close" title="Close" aria-label="Close">×</button>
+        </header>
+        <p class="landing-intro">
+          Practice drawing from photo reference. Choose a local folder of images, set options, then start your session.
+        </p>
+
+        <div class="landing-section">
+          <h2 class="landing-heading">Selected folder</h2>
+          <p class="landing-hint">Select a folder (or a recent session) before starting.</p>
+          <div class="landing-folder-row">
+            <button id="pickBtn" type="button" class="btn btn-primary">Choose folder…</button>
+            <span id="landingSelectedName" class="landing-selected-name">No folder selected</span>
+          </div>
+          <div class="landing-recents">
+            <span class="landing-recents-label">Recent sessions</span>
+            <div id="landingRecentList" class="landing-recent-list"></div>
+          </div>
+        </div>
+
+        <div class="landing-section landing-options">
+          <div class="landing-option">
+            <label class="landing-option-label">Number of images</label>
+            <div class="chip-row" id="countPresets">
+              <button type="button" class="chip" data-count="5">5</button>
+              <button type="button" class="chip" data-count="10">10</button>
+              <button type="button" class="chip" data-count="15">15</button>
+              <button type="button" class="chip" data-count="20">20</button>
+              <button type="button" class="chip" data-count="25">25</button>
+            </div>
+            <input id="countInput" type="number" min="1" class="landing-input-inline" value="10" aria-label="Number of images">
+          </div>
+          <div class="landing-option">
+            <label class="landing-option-label">Time per image</label>
+            <div class="chip-row" id="durationPresets">
+              <button type="button" class="chip" data-seconds="60">1 min</button>
+              <button type="button" class="chip" data-seconds="120">2 min</button>
+              <button type="button" class="chip" data-seconds="300">5 min</button>
+              <button type="button" class="chip" data-seconds="600">10 min</button>
+              <button type="button" class="chip" data-seconds="1200">20 min</button>
+              <button type="button" class="chip" data-seconds="1800">30 min</button>
+            </div>
+            <input id="secondsInput" type="number" min="1" class="landing-input-inline" value="120" aria-label="Seconds per image">
+            <span class="landing-input-suffix">seconds</span>
+          </div>
+        </div>
+
+        <div class="landing-section landing-extras">
+          <div class="landing-row landing-row-inline">
+            <label class="landing-check"><input id="shuffleInput" type="checkbox" checked> Shuffle</label>
+            <label class="landing-check"><input id="recurseInput" type="checkbox" checked> Include subfolders</label>
+          </div>
+          <div class="landing-row">
+            <label class="landing-option-label">Category</label>
+            <select id="categorySel" class="landing-select"><option value="__ALL__">All</option></select>
+          </div>
+          <div class="landing-row landing-row-two">
+            <div><label class="landing-option-label">Break every (photos)</label><input id="breakEveryInput" type="number" min="0" value="0" class="landing-input-narrow"></div>
+            <div><label class="landing-option-label">Break (seconds)</label><input id="breakSecondsInput" type="number" min="1" value="3" class="landing-input-narrow"></div>
+          </div>
+          <div class="landing-row landing-row-two">
+            <div><label class="landing-option-label">Warm-up (s)</label><input id="warmupSecondsInput" type="number" min="0" value="5" class="landing-input-narrow"></div>
+            <div><label class="landing-option-label">Cool-down (s)</label><input id="cooldownSecondsInput" type="number" min="0" value="5" class="landing-input-narrow"></div>
+          </div>
+          <div class="landing-row">
+            <label class="landing-option-label">Sound</label>
+            <select id="soundPackSelect" class="landing-select">
+              <option value="classic">Classic</option>
+              <option value="woodblock">Woodblock</option>
+              <option value="claves">Claves</option>
+              <option value="click">Click</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
+          <div class="landing-row landing-row-inline">
+            <label class="landing-check"><input id="coverModeInput" type="checkbox"> Edge-to-edge (cover)</label>
+            <label class="landing-check"><input id="fullscreenOnStartInput" type="checkbox" checked> Fullscreen on start</label>
+          </div>
+          <div class="landing-row">
+            <label class="landing-option-label">Thumbnail size: <strong id="thumbSizeLabel">Auto</strong></label>
+            <input id="thumbSizeInput" type="range" min="80" max="260" step="4" class="landing-range">
+            <span class="landing-muted">Double-click slider for Auto.</span>
+          </div>
+        </div>
+
+        <div class="landing-actions">
+          <button id="startSessionBtn" type="button" class="btn btn-start">Start session</button>
+          <p id="landingError" class="landing-error" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage" id="stage" hidden>
       <img id="img" alt="current reference" hidden />
       <div class="overlay">
 
@@ -79,8 +175,11 @@
             </div>
           </div>
 
-          <!-- Group 2 (right): ring + Play/Pause + timer -->
+          <!-- Group 2 (right): expanded = ring + Play/Pause + timer; minimized = pill with border progress -->
           <div class="hud-right">
+            <svg class="hud-pill-progress" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+              <path id="pillProgressPath" class="hud-pill-progress-path" d="M 12,0 H 88 Q 100,0 100,12 V 28 Q 100,40 88,40 H 12 Q 0,40 0,28 V 12 Q 0,0 12,0" pathLength="100" fill="none"/>
+            </svg>
             <div class="dial">
               <svg class="ring" viewBox="0 0 120 120" width="76" height="76" aria-hidden="true">
                 <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
@@ -110,92 +209,6 @@
         <div class="break-screen" hidden>
           <div><h1>Break</h1><p>Great job — breathe and relax.</p></div>
         </div>
-
-        <!-- Settings -->
-        <aside id="settingsPanel" class="settings" hidden>
-          <header>
-            <h2>Settings</h2>
-            <button id="closeSettings" class="btn btn-ghost">✕</button>
-          </header>
-
-          <div class="grid">
-            <div class="field"><label>Choose Folder</label><button id="pickBtn" class="btn">Choose…</button></div>
-
-            <div class="field">
-              <label>Recent Sessions</label>
-              <div id="recentList" class="recent-list"><div class="muted">No recent sessions yet.</div></div>
-            </div>
-            <section>
-              <h3>Recent Sessions</h3>
-              <div id="recentSessions" class="recent-sessions"></div>
-            </section>
-
-            <div class="field">
-              <label>Photos</label>
-              <input id="countInput" type="number" min="1" step="1" value="30">
-              <div class="chip-group" id="countPresets">
-                <button class="chip" data-count="10">10</button>
-                <button class="chip" data-count="20">20</button>
-                <button class="chip" data-count="30">30</button>
-                <button class="chip" data-count="50">50</button>
-                <button class="chip" data-count="100">100</button>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>Seconds / Photo</label>
-              <input id="secondsInput" type="number" min="1" step="1" value="30">
-              <div class="chip-group" id="durationPresets">
-                <button class="chip" data-seconds="5">5s</button>
-                <button class="chip" data-seconds="30">30s</button>
-                <button class="chip" data-seconds="60">1m</button>
-                <button class="chip" data-seconds="120">2m</button>
-                <button class="chip" data-seconds="180">3m</button>
-                <button class="chip" data-seconds="300">5m</button>
-                <button class="chip" data-seconds="600">10m</button>
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="inline">Shuffle <input id="shuffleInput" type="checkbox" checked></label>
-              <label class="inline">Include Subfolders <input id="recurseInput" type="checkbox" checked></label>
-            </div>
-
-            <div class="field"><label>Category</label><select id="categorySel"><option value="__ALL__">All</option></select></div>
-
-            <div class="field two">
-              <label>Break every (photos) <input id="breakEveryInput" type="number" min="0" value="0"></label>
-              <label>Break seconds <input id="breakSecondsInput" type="number" min="1" value="3"></label>
-            </div>
-
-            <div class="field two">
-              <label>Warm-up (s) <input id="warmupSecondsInput" type="number" min="0" value="5"></label>
-              <label>Cool-down (s) <input id="cooldownSecondsInput" type="number" min="0" value="5"></label>
-            </div>
-
-            <div class="field">
-              <label>Sound Pack</label>
-              <select id="soundPackSelect">
-                <option value="classic">Classic</option>
-                <option value="woodblock">Woodblock</option>
-                <option value="claves">Claves</option>
-                <option value="click">Click</option>
-                <option value="off">Off</option>
-              </select>
-            </div>
-
-            <div class="field two">
-              <label class="inline">Edge-to-edge (Cover) <input id="coverModeInput" type="checkbox"></label>
-              <label class="inline">Fullscreen on start <input id="fullscreenOnStartInput" type="checkbox" checked></label>
-            </div>
-
-            <div class="field">
-              <label>Thumbnail size: <strong id="thumbSizeLabel">Auto</strong></label>
-              <input id="thumbSizeInput" type="range" min="80" max="260" step="4">
-              <div class="muted">Double-click slider to reset to Auto.</div>
-            </div>
-          </div>
-        </aside>
 
         <!-- Hints -->
         <aside id="hintsPanel" class="hints" hidden>

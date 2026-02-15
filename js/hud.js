@@ -2,9 +2,7 @@ window.app = window.app || {};
 (function(app){
   let hudHideTimer = null;
   function panelsOpen() {
-    return (!!app.el.settingsPanel && !app.el.settingsPanel.hidden) ||
-           (!!app.el.hintsPanel && !app.el.hintsPanel.hidden) ||
-           (!!app.el.thumbsTray && !app.el.thumbsTray.hidden);
+    return !!(app.el.hintsPanel && !app.el.hintsPanel.hidden);
   }
   function canAutoHide() {
     return app.phase !== app.PHASE.IDLE && app.phase !== app.PHASE.DONE && !panelsOpen();
@@ -20,6 +18,10 @@ window.app = window.app || {};
   ['mousemove','keydown','touchstart','click'].forEach(evt => {
     document.addEventListener(evt, () => { app.showHud(); app.scheduleHudHide(); }, { passive: true });
   });
-  app.on(app.el.hud, 'click', (e) => e.stopPropagation());
+  app.on(app.el.hud, 'click', (e) => {
+    app.showHud();
+    app.scheduleHudHide();
+    e.stopPropagation();
+  });
 })(window.app);
 

@@ -12,7 +12,6 @@ window.app = window.app || {};
     let len = 0;
     try { len = el.getTotalLength ? el.getTotalLength() : 0; } catch { len = 0; }
     if (!len) {
-      // fallback: 2πr (SVG r attribute)
       const r = Number(el.getAttribute('r') || 54);
       len = 2 * Math.PI * r;
     }
@@ -20,10 +19,20 @@ window.app = window.app || {};
     el.style.strokeDasharray = `${len}`;
     el.style.strokeDashoffset = `${len}`;
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initRing, { once: true });
-  } else {
+  function initPillProgress(){
+    const el = app.el.pillProgressPath;
+    if (!el) return;
+    el.style.strokeDasharray = '100';
+    el.style.strokeDashoffset = '100';
+  }
+  function initHudProgress(){
     initRing();
+    initPillProgress();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHudProgress, { once: true });
+  } else {
+    initHudProgress();
   }
 
   // ---- Audio ----

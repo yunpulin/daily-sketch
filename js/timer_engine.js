@@ -66,10 +66,15 @@ window.app = window.app || {};
   }
 
   function updateCircle(elapsed){
-    if (!app.el.ringFg || !app.CIRC || !Number.isFinite(app.phaseDuration) || app.phaseDuration <= 0) return;
+    if (!Number.isFinite(app.phaseDuration) || app.phaseDuration <= 0) return;
     const pct = Math.min(1, Math.max(0, elapsed / app.phaseDuration));
-    const offset = app.CIRC * (1 - pct);
-    app.el.ringFg.style.strokeDashoffset = `${offset}`;
+    if (app.el.ringFg && app.CIRC) {
+      app.el.ringFg.style.strokeDashoffset = `${app.CIRC * (1 - pct)}`;
+    }
+    if (app.el.pillProgressPath) {
+      app.el.pillProgressPath.style.strokeDasharray = '100';
+      app.el.pillProgressPath.style.strokeDashoffset = `${100 * (1 - pct)}`;
+    }
   }
   function tick(){
     const elapsed = (Date.now()-startedAt)/1000;
@@ -91,6 +96,10 @@ window.app = window.app || {};
     startedAt = Date.now();
     lastWholeSecond = null;
     if (app.el.ringFg && app.CIRC) app.el.ringFg.style.strokeDashoffset = `${app.CIRC}`;
+    if (app.el.pillProgressPath) {
+      app.el.pillProgressPath.style.strokeDasharray = '100';
+      app.el.pillProgressPath.style.strokeDashoffset = '100';
+    }
     clearInterval(timerId);
     timerId = setInterval(tick, 200);
     paused = false;
@@ -123,6 +132,10 @@ window.app = window.app || {};
     if (app.el.ringFg && app.CIRC) {
       app.el.ringFg.style.strokeDasharray = `${app.CIRC}`;
       app.el.ringFg.style.strokeDashoffset = `${app.CIRC}`;
+    }
+    if (app.el.pillProgressPath) {
+      app.el.pillProgressPath.style.strokeDasharray = '100';
+      app.el.pillProgressPath.style.strokeDashoffset = '100';
     }
     setPlayIcon(false);
     app.showHud?.(); app.cancelHudHide?.();
@@ -194,6 +207,7 @@ window.app = window.app || {};
       app.resetTimerUI();
       if (app.el.ringFg) app.el.ringFg.style.strokeDashoffset = '0';
       app.playCue('break_end');
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
       return;
     }
 

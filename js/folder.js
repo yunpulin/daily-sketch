@@ -68,7 +68,7 @@ window.app = window.app || {};
     }
   }
 
-  // Ask user to pick a directory
+  // Ask user to pick a directory (from Settings panel: scan and go to stage)
   app.chooseDirectory = async function chooseDirectory() {
     try {
       const dir = await window.showDirectoryPicker({ mode: 'read' });
@@ -77,6 +77,23 @@ window.app = window.app || {};
       await app.renderRecentSessions?.();
     } catch (e) {
       app.status?.('Folder selection canceled.');
+    }
+  };
+
+  // Landing only: pick folder and set as selected for session (do not scan yet)
+  app.chooseFolderForLanding = async function chooseFolderForLanding() {
+    try {
+      const dir = await window.showDirectoryPicker({ mode: 'read' });
+      app.selectedHandle = dir;
+      await app.addRecentSession?.(dir);
+      app.updateLandingSelectedName?.(dir.name || 'Folder');
+      await app.renderLandingRecents?.();
+      if (app.el?.landingError) app.el.landingError.hidden = true;
+    } catch (e) {
+      if (e.name !== 'AbortError' && app.el?.landingError) {
+        app.el.landingError.textContent = 'Folder selection canceled.';
+        app.el.landingError.hidden = false;
+      }
     }
   };
 
@@ -126,6 +143,11 @@ window.app = window.app || {};
 
     // Per spec: just preload & show first image; remain IDLE
     await app.prepareAfterScanIdle();
+
+    if (app.el?.landing && app.el?.stage && !app.el.landing.hidden) {
+      app.el.landing.hidden = true;
+      app.el.stage.hidden = false;
+    }
   };
 })(window.app);
 

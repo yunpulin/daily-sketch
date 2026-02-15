@@ -2,6 +2,14 @@ window.app = window.app || {};
 (function(app){
   const $ = (id) => document.getElementById(id);
   app.el = {
+    landing: $('landing'),
+    stage: $('stage'),
+    landingSelectedName: $('landingSelectedName'),
+    landingRecentList: $('landingRecentList'),
+    landingCloseBtn: $('landingCloseBtn'),
+    startSessionBtn: $('startSessionBtn'),
+    landingError: $('landingError'),
+
     hud: $('hud'),
     img: $('img'),
 
@@ -13,6 +21,7 @@ window.app = window.app || {};
 
     // ring progress (group 2)
     ringFg: $('ringFg'),
+    pillProgressPath: $('pillProgressPath'),
     remaining: $('remaining'),   // mm:SS text
 
     // scan HUD
@@ -37,12 +46,10 @@ window.app = window.app || {};
     thumbsTray: $('thumbsTray'),
     thumbsWrap: $('thumbsWrap'),
     closeThumbs: $('closeThumbs'),
-    settingsPanel: $('settingsPanel'),
     hintsPanel: $('hintsPanel'),
-    closeSettings: $('closeSettings'),
     closeHints: $('closeHints'),
 
-    // settings inputs
+    // form inputs (all on landing)
     pickBtn: $('pickBtn'),
     countInput: $('countInput'),
     secondsInput: $('secondsInput'),
@@ -62,9 +69,6 @@ window.app = window.app || {};
 
     durationChips: $('durationPresets'),
     countChips: $('countPresets'),
-
-    // recents
-    recentList: $('recentList'),
   };
 
   app.on = (el, ev, fn, opts) => { if (el) el.addEventListener(ev, fn, opts); };

@@ -201,6 +201,56 @@ window.app = window.app || {};
     }
   };
 
+  // Public: render recents on landing (select folder for session, do not open yet)
+  app.renderLandingRecents = async function renderLandingRecents() {
+    const host = app.el?.landingRecentList;
+    if (!host) return;
+    host.innerHTML = '';
+
+    let all = await idbGetAll();
+    all.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+    if (!all.length) return;
+
+    for (const rec of all) {
+      const row = document.createElement('div');
+      row.className = 'landing-recent-item';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = rec.name || 'Folder';
+      btn.title = 'Use this folder for session';
+      btn.addEventListener('click', async () => {
+        const ok = await verifyPermission(rec.handle);
+        if (!ok) {
+          if (app.el?.landingError) {
+            app.el.landingError.textContent = 'Permission denied for this folder.';
+            app.el.landingError.hidden = false;
+          }
+          return;
+        }
+        app.selectedHandle = rec.handle;
+        app.updateLandingSelectedName?.(rec.name || 'Folder');
+        if (app.el?.landingError) app.el.landingError.hidden = true;
+      });
+
+      const del = document.createElement('button');
+      del.className = 'recent-del';
+      del.type = 'button';
+      del.setAttribute('aria-label', 'Remove from recents');
+      del.innerHTML = '&times;';
+      del.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await idbDelete(rec.id);
+        await app.renderLandingRecents();
+      });
+
+      row.appendChild(btn);
+      row.appendChild(del);
+      host.appendChild(row);
+    }
+  };
+
   // Public: open a recent session by id
   app.openRecentSession = async function openRecentSession(id) {
     const db = await openDB();
@@ -231,25 +281,6 @@ window.app = window.app || {};
     await app.chooseDirectoryWithHandle?.(entry.handle);
   };
 
-  // Hook up "Choose Folder" in Settings if present
-  if (app.el?.pickBtn) {
-    app.el.pickBtn.addEventListener('click', async () => {
-      app.el.pickBtn.disabled = true;
-      try {
-        await app.chooseDirectory?.();
-      } finally {
-        app.el.pickBtn.disabled = false;
-      }
-    });
-  }
-
-  // Render the list once at startup
-  (async () => {
-    try {
-      await app.renderRecentSessions();
-    } catch (_) {
-      // ignore
-    }
-  })();
+  // Landing recents are rendered from init.js after load
 })(window.app);
 

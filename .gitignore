@@ -56,3 +56,6 @@ build/
 package.zip
 extension.zip
 
+# Build/distribution directory
+dist/
+

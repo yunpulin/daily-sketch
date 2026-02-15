@@ -6,7 +6,7 @@ window.app = window.app || {};
   app.RECENT_LIMIT = 10;
 
   // HUD behavior
-  app.HUD_AUTOHIDE_MS = 1800;
+  app.HUD_AUTOHIDE_MS = 6000;
 
   // Thumbnails
   app.MAX_THUMBS = 100;          // cap for performance
